@@ -1,0 +1,115 @@
+/* Skills Visualization Styles */
+
+.skills-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.skill-item {
+    margin-bottom: 25px;
+}
+
+.skill-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.skill-name {
+    font-weight: bold;
+    color: var(--dark-color);
+}
+
+.skill-level {
+    font-size: 0.9rem;
+    color: var(--primary-color);
+}
+
+.skill-bar {
+    height: 12px;
+    background-color: #e9ecef;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+.skill-progress {
+    height: 100%;
+    border-radius: 10px;
+    transition: width 1s ease;
+}
+
+/* Different colors for different skill types */
+.skill-progress.frontend {
+    background-color: var(--primary-color);
+}
+
+.skill-progress.backend {
+    background-color: var(--success-color);
+}
+
+.skill-progress.soft {
+    background-color: var(--info-color);
+}
+
+.skill-progress.industry {
+    background-color: var(--warning-color);
+}
+
+/* Achievements styles */
+.achievements-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.achievement-card {
+    background-color: white;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease;
+}
+
+.achievement-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.achievement-icon {
+    font-size: 2rem;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.achievement-title {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: var(--dark-color);
+}
+
+.achievement-description {
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+.achievement-date {
+    font-size: 0.8rem;
+    color: #adb5bd;
+    margin-top: 10px;
+    text-align: right;
+}
+
+/* Animation for new achievements */
+@keyframes highlightNew {
+    0% { background-color: rgba(28, 200, 138, 0.3); }
+    100% { background-color: white; }
+}
+
+.achievement-new {
+    animation: highlightNew 2s ease;
+}

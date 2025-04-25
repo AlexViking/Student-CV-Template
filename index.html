@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Student CV - Gamified Learning Platform</title>
+	<link rel="stylesheet" href="css/main.css">
+	<link rel="stylesheet" href="css/skills.css">
+</head>
+
+<body>
+	<header>
+		<div class="container">
+			<h1 id="student-name">Student Name</h1>
+			<p id="student-title">Web Development Student</p>
+		</div>
+	</header>
+
+	<main class="container">
+		<section id="about">
+			<h2>About Me</h2>
+			<p id="about-text">I am a student learning web development through an innovative gamified learning platform.
+			</p>
+		</section>
+
+		<section id="skills">
+			<h2>Skills</h2>
+			<div class="skills-container">
+				<!-- Skills will be dynamically generated here -->
+			</div>
+		</section>
+
+		<section id="achievements">
+			<h2>Achievements</h2>
+			<div class="achievements-container">
+				<!-- Achievements will be dynamically generated here -->
+			</div>
+		</section>
+
+		<section id="key-entry">
+			<h2>Add Achievement Key</h2>
+			<form id="key-form">
+				<div class="form-group">
+					<label for="achievement-key">Enter your achievement key:</label>
+					<input type="text" id="achievement-key" name="achievement-key" placeholder="Paste your key here">
+				</div>
+				<button type="submit" class="btn">Submit Key</button>
+			</form>
+			<div id="key-result"></div>
+		</section>
+	</main>
+
+	<footer>
+		<div class="container">
+			<p>© 2025 Gamified CV Learning Platform</p>
+		</div>
+	</footer>
+
+	<script src="js/app.js"></script>
+	<script src="js/key-manager.js"></script>
+	<script src="js/skills.js"></script>
+</body>
+
+</html>
