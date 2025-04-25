@@ -1,64 +1,101 @@
-/* Skills Visualization Styles */
-
+/* CV Specific Styles */
 .skills-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 20px;
 }
 
 .skill-item {
-    margin-bottom: 25px;
+    padding: 15px;
+    background-color: rgba(24, 22, 36, 0.8);
+    border: 2px solid var(--border-color);
+    position: relative;
+    margin-bottom: 15px;
 }
 
-.skill-header {
+.skill-item::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    width: 10px;
+    height: 10px;
+    background-color: var(--skills-color);
+}
+
+.skill-item .skill-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
 }
 
 .skill-name {
-    font-weight: bold;
-    color: var(--dark-color);
+    font-size: 12px;
+    color: var(--skills-color);
 }
 
 .skill-level {
-    font-size: 0.9rem;
+    font-size: 10px;
     color: var(--primary-color);
 }
 
 .skill-bar {
-    height: 12px;
-    background-color: #e9ecef;
-    border-radius: 10px;
-    overflow: hidden;
+    height: 10px;
+    background-color: var(--dark-color);
+    border: 1px solid var(--border-color);
     position: relative;
+    overflow: hidden;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
 }
 
 .skill-progress {
     height: 100%;
-    border-radius: 10px;
+    position: absolute;
+    top: 0;
+    left: 0;
     transition: width 1s ease;
 }
 
-/* Different colors for different skill types */
 .skill-progress.frontend {
-    background-color: var(--primary-color);
+    background: repeating-linear-gradient(
+        45deg,
+        var(--html-color),
+        var(--html-color) 5px,
+        var(--css-color) 5px,
+        var(--css-color) 10px
+    );
 }
 
 .skill-progress.backend {
-    background-color: var(--success-color);
+    background: repeating-linear-gradient(
+        45deg,
+        var(--secondary-color),
+        var(--secondary-color) 5px,
+        var(--journey-color) 5px,
+        var(--journey-color) 10px
+    );
 }
 
 .skill-progress.soft {
-    background-color: var(--info-color);
+    background: repeating-linear-gradient(
+        45deg,
+        var(--primary-color),
+        var(--primary-color) 5px,
+        var(--skills-color) 5px,
+        var(--skills-color) 10px
+    );
 }
 
 .skill-progress.industry {
-    background-color: var(--warning-color);
+    background: repeating-linear-gradient(
+        45deg,
+        var(--projects-color),
+        var(--projects-color) 5px,
+        var(--experience-color) 5px,
+        var(--experience-color) 10px
+    );
 }
 
-/* Achievements styles */
 .achievements-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -66,50 +103,135 @@
 }
 
 .achievement-card {
-    background-color: white;
-    border: 1px solid #eee;
-    border-radius: 8px;
+    background-color: rgba(24, 22, 36, 0.8);
+    border: 2px solid var(--border-color);
     padding: 15px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    position: relative;
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
     transition: transform 0.3s ease;
 }
 
 .achievement-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.achievement-card::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    width: 10px;
+    height: 10px;
+    background-color: var(--primary-color);
 }
 
 .achievement-icon {
-    font-size: 2rem;
-    color: var(--primary-color);
+    font-size: 24px;
     margin-bottom: 10px;
     text-align: center;
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.8);
 }
 
 .achievement-title {
-    font-weight: bold;
+    font-size: 14px;
     margin-bottom: 5px;
-    color: var(--dark-color);
+    color: var(--primary-color);
 }
 
 .achievement-description {
-    font-size: 0.9rem;
-    color: #6c757d;
+    font-size: 10px;
+    margin-bottom: 10px;
 }
 
 .achievement-date {
-    font-size: 0.8rem;
-    color: #adb5bd;
-    margin-top: 10px;
+    font-size: 8px;
     text-align: right;
-}
-
-/* Animation for new achievements */
-@keyframes highlightNew {
-    0% { background-color: rgba(28, 200, 138, 0.3); }
-    100% { background-color: white; }
+    color: var(--accent-color);
 }
 
 .achievement-new {
-    animation: highlightNew 2s ease;
+    animation: pixelGlow 2s infinite;
+}
+
+@keyframes pixelGlow {
+    0% { box-shadow: 0 0 5px rgba(139, 92, 246, 0.5); }
+    50% { box-shadow: 0 0 20px rgba(139, 92, 246, 0.8); }
+    100% { box-shadow: 0 0 5px rgba(139, 92, 246, 0.5); }
+}
+
+/* Key Manager */
+#key-form {
+    background-color: rgba(24, 22, 36, 0.8);
+    border: 2px solid var(--border-color);
+    padding: 15px;
+    margin-bottom: 20px;
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
+}
+
+#key-result {
+    padding: 10px;
+    border: 2px solid;
+    margin-top: 15px;
+    display: none;
+    font-size: 12px;
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.8);
+}
+
+.result-success {
+    background-color: rgba(16, 185, 129, 0.2);
+    border-color: var(--secondary-color) !important;
+    color: var(--secondary-color);
+}
+
+.result-error {
+    background-color: rgba(244, 63, 94, 0.2);
+    border-color: var(--accent-color) !important;
+    color: var(--accent-color);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .container {
+        width: 95%;
+        padding: 10px;
+    }
+    
+    header {
+        padding: 20px 0;
+    }
+    
+    header h1 {
+        font-size: 24px;
+    }
+    
+    .section-header h2 {
+        font-size: 18px;
+    }
+    
+    .skills-container, .achievements-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .interactive-diagram, .http-demo, .browser-workflow {
+        padding: 10px;
+    }
+    
+    .pixel-btn, .btn {
+        font-size: 10px;
+        padding: 6px 10px;
+    }
+    
+    .simulation-stage {
+        height: 280px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .sim-browser, .sim-server {
+        position: static;
+        transform: none;
+        margin: 10px 0;
+        width: 90%;
+    }
 }

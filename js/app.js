@@ -87,7 +87,7 @@ function addGamePlatformButton() {
 	platformSection.innerHTML = `
         <h2>Learning Games Platform</h2>
         <p>Ready to improve your skills? Visit our Game Platform to access interactive learning games and earn achievement keys.</p>
-        <a href="https://AlexViking.github.io/game-platform" class="btn" target="_blank">Go to Game Platform</a>
+        <a href="https://AlexViking.github.io/game-platform" class="pixel-btn" target="_blank">Go to Game Platform</a>
     `;
 
 	mainElement.appendChild(platformSection);
