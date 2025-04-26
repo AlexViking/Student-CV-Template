@@ -55,20 +55,56 @@ The CV has local storage functionality. When you first load your CV page:
 
 When you complete learning games on the platform, you'll receive achievement keys. Here's how to add them:
 
-### Method 1: Using the CV Interface
+### Method 1: Using the CV Interface (Temporary, Browser-Only)
 1. Navigate to your CV page
 2. Find the "Add Achievement Key" section
 3. Paste your achievement key into the input field
 4. Click "Submit Key"
 
-### Method 2: Manually Adding Keys (For Advanced Users)
+**Important Note:** This method saves your achievements only in your browser's local storage. This means:
+- Your achievements will only be visible on YOUR device and browser
+- Other people viewing your CV online (like teachers or parents) WON'T see these achievements
+- If you clear your browser data, you'll lose your achievements
+
+### Method 2: Permanent Storage (Recommended for Sharing)
+For achievements that anyone can see when visiting your CV:
+
+1. After adding keys using Method 1, click the "Export Achievements" button at the bottom of the Achievements section
+2. This will download a file called `my-achievements.json`
+3. In your GitHub repository:
+   - Click "Add file" > "Upload files"
+   - Upload the `my-achievements.json` file
+   - Write a commit message like "Add my achievements"
+   - Click "Commit changes"
+4. Wait a few minutes for GitHub Pages to update
+
+Now your achievements will be permanently stored in your repository and visible to anyone who views your CV online!
+
+### Method 3: Manual Editing (For Advanced Users)
 If you prefer direct editing:
 
-1. Open your browser's developer tools (F12 or right-click and select "Inspect")
-2. Go to the "Application" tab
-3. Select "Local Storage" on the left sidebar
-4. Find your CV site URL
-5. Add or modify keys in the `verifiedKeys` item
+1. Create a file named `my-achievements.json` in your repository
+2. Add your achievements in this format:
+```json
+{
+  "verifiedKeys": [
+    "base64EncodedKey1",
+    "base64EncodedKey2"
+  ],
+  "skills": {
+    "html": { "name": "HTML", "category": "frontend", "points": 25, "level": 2, "maxPoints": 100 },
+    "css": { "name": "CSS", "category": "frontend", "points": 10, "level": 1, "maxPoints": 100 }
+  },
+  "achievements": [
+    {
+      "skillId": "html",
+      "title": "HTML Level 2",
+      "description": "Completed HTML Fundamentals",
+      "date": "2025-04-26",
+      "icon": "📄"
+    }
+  ]
+}
 
 ## 🔧 Advanced Customization
 
