@@ -105,6 +105,7 @@ If you prefer direct editing:
     }
   ]
 }
+```
 
 ## 🔧 Advanced Customization
 
