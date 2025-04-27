@@ -91,13 +91,6 @@ const KeyManager = (function () {
 			return false;
 		}
 
-		// Verify student ID if present
-		const student = getStudentInfo();
-		if (keyData.studentId && keyData.studentId !== student.id) {
-			console.error('Key was generated for a different student');
-			return false;
-		}
-
 		// Verify signature
 		const originalSignature = keyData.signature;
 
@@ -264,6 +257,71 @@ const KeyManager = (function () {
 		localStorage.setItem('keyAttempts', JSON.stringify(attempts));
 	};
 
+	// Generate CLI instructions for permanent key storage
+	const generatePermanentSaveInstructions = function (key) {
+		const githubUsername = getGitHubUsername() || 'YOUR-USERNAME';
+
+		return `
+		<div class="permanent-save-container">
+			<h3>🎉 Success! Make Your Achievement Permanent</h3>
+			<p>To save this achievement permanently, add it to your keys.js file.</p>
+			
+			<div class="save-methods">
+				<div class="save-method">
+					<h4>Option 1: GitHub Web Interface</h4>
+					<ol>
+						<li>Go to your repository: <a href="https://github.com/${githubUsername}/Student-CV-Template/blob/main/js/keys.js" target="_blank">js/keys.js</a></li>
+						<li>Click the pencil icon to edit</li>
+						<li>Add this line to the achievementKeys array:</li>
+						<pre><code>"${key}",</code></pre>
+						<li>Commit the changes</li>
+					</ol>
+				</div>
+				
+				<div class="save-method">
+					<h4>Option 2: Command Line</h4>
+					<p>Copy and paste these commands:</p>
+					<pre><code># Clone your repository if you haven't already
+git clone https://github.com/${githubUsername}/Student-CV-Template.git
+cd Student-CV-Template
+
+# Add the key to keys.js
+echo '  "${key}",' >> js/keys.js
+
+# Commit and push
+git add js/keys.js
+git commit -m "Added new achievement key"
+git push origin main</code></pre>
+				</div>
+				
+				<div class="save-method">
+					<h4>Option 3: VS Code</h4>
+					<ol>
+						<li>Open your project in VS Code</li>
+						<li>Open js/keys.js</li>
+						<li>Add this line to the achievementKeys array:</li>
+						<pre><code>"${key}",</code></pre>
+						<li>Save the file</li>
+						<li>Use Source Control to commit and push</li>
+					</ol>
+				</div>
+			</div>
+			
+			<div class="copy-key-section">
+				<button onclick="copyKey('${key}')" class="btn">Copy Key</button>
+				<span id="copy-feedback" style="display: none;">✓ Copied!</span>
+			</div>
+		</div>
+		`;
+	};
+
+	// Helper function to get GitHub username
+	const getGitHubUsername = function () {
+		const url = window.location.href;
+		const match = url.match(/https?:\/\/([^.]+)\.github\.io/i);
+		return match ? match[1] : null;
+	};
+
 	// Initialize from localStorage
 	const init = function () {
 		// Load verified keys
@@ -340,7 +398,8 @@ const KeyManager = (function () {
 				success: true,
 				message: 'Skills updated successfully',
 				updatedSkills,
-				newAchievements
+				newAchievements,
+				key: key  // Return the key for save instructions
 			};
 		},
 
@@ -354,7 +413,9 @@ const KeyManager = (function () {
 
 		getVerificationLog: function () {
 			return JSON.parse(localStorage.getItem('keyAttempts') || '[]');
-		}
+		},
+
+		generatePermanentSaveInstructions: generatePermanentSaveInstructions
 	};
 })();
 
@@ -367,6 +428,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		e.preventDefault();
 		const keyInput = document.getElementById('achievement-key');
 		const resultDiv = document.getElementById('key-result');
+		const instructionsDiv = document.getElementById('permanent-save-instructions');
 
 		const result = KeyManager.process(keyInput.value);
 
@@ -381,8 +443,15 @@ document.addEventListener('DOMContentLoaded', function () {
 			// Update achievements
 			updateAchievementsDisplay(result.newAchievements, true);
 
+			// Show permanent save instructions
+			instructionsDiv.innerHTML = KeyManager.generatePermanentSaveInstructions(result.key);
+			instructionsDiv.style.display = 'block';
+
 			// Clear input
 			keyInput.value = '';
+		} else {
+			// Hide instructions if not successful
+			instructionsDiv.style.display = 'none';
 		}
 
 		// Hide result message after 5 seconds
@@ -391,3 +460,14 @@ document.addEventListener('DOMContentLoaded', function () {
 		}, 5000);
 	});
 });
+
+// Global function to copy key
+window.copyKey = function (key) {
+	navigator.clipboard.writeText(key).then(() => {
+		const feedback = document.getElementById('copy-feedback');
+		feedback.style.display = 'inline';
+		setTimeout(() => {
+			feedback.style.display = 'none';
+		}, 2000);
+	});
+};
