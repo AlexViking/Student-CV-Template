@@ -145,6 +145,34 @@ function setupNavigationHandlers() {
 /**
  * Navigate to game platform with current user data
  */
+// function navigateToGamePlatform() {
+// 	// Get current user progress
+// 	const skills = KeyManager.getSkills();
+// 	const achievements = KeyManager.getAchievements();
+// 	const githubUsername = getGitHubUsername();
+
+// 	// Calculate completed games
+// 	const completedGames = getCompletedGames(achievements);
+
+// 	// Build URL with user data
+// 	const platformUrl = new URL(CV_CONFIG.PLATFORM_URL);
+// 	platformUrl.searchParams.append('student', githubUsername || 'unknown');
+// 	platformUrl.searchParams.append('completed', JSON.stringify(completedGames));
+// 	platformUrl.searchParams.append('return_url', window.location.href);
+
+// 	window.debug.log('Navigating to game platform', 'info');
+// 	window.debug.trackNavigation('Student CV', 'Game Platform', {
+// 		student: githubUsername,
+// 		completedGames: completedGames
+// 	});
+
+// 	// Navigate in same tab
+// 	window.location.href = platformUrl.toString();
+// }
+
+/**
+ * Navigate to game platform with current user data
+ */
 function navigateToGamePlatform() {
 	// Get current user progress
 	const skills = KeyManager.getSkills();
@@ -154,16 +182,22 @@ function navigateToGamePlatform() {
 	// Calculate completed games
 	const completedGames = getCompletedGames(achievements);
 
+	// Also check localStorage for completed games
+	const storedCompletedGames = JSON.parse(localStorage.getItem('completedGames') || '[]');
+
+	// Merge both lists and remove duplicates
+	const allCompletedGames = [...new Set([...completedGames, ...storedCompletedGames])];
+
 	// Build URL with user data
 	const platformUrl = new URL(CV_CONFIG.PLATFORM_URL);
 	platformUrl.searchParams.append('student', githubUsername || 'unknown');
-	platformUrl.searchParams.append('completed', JSON.stringify(completedGames));
+	platformUrl.searchParams.append('completed', JSON.stringify(allCompletedGames));
 	platformUrl.searchParams.append('return_url', window.location.href);
 
 	window.debug.log('Navigating to game platform', 'info');
 	window.debug.trackNavigation('Student CV', 'Game Platform', {
 		student: githubUsername,
-		completedGames: completedGames
+		completedGames: allCompletedGames
 	});
 
 	// Navigate in same tab
@@ -173,24 +207,48 @@ function navigateToGamePlatform() {
 /**
  * Get list of completed games from achievements
  */
-function getCompletedGames(achievements) {
-	const gameMap = {
-		'internet-basics': 'Internet Basics',
-		'html-fundamentals': 'HTML Fundamentals',
-		'css-styling': 'CSS Styling',
-		'javascript-basics': 'JavaScript Basics'
-	};
+// function getCompletedGames(achievements) {
+// 	const gameMap = {
+// 		'internet-basics': 'Internet Basics',
+// 		'html-fundamentals': 'HTML Fundamentals',
+// 		'css-styling': 'CSS Styling',
+// 		'javascript-basics': 'JavaScript Basics'
+// 	};
 
+// 	const completedGames = [];
+
+// 	achievements.forEach(achievement => {
+// 		// Extract game ID from achievement
+// 		for (const [gameId, gameName] of Object.entries(gameMap)) {
+// 			if (achievement.title.includes(gameName) || achievement.description.includes(gameName)) {
+// 				if (!completedGames.includes(gameId)) {
+// 					completedGames.push(gameId);
+// 				}
+// 			}
+// 		}
+// 	});
+
+// 	return completedGames;
+// }
+
+/**
+ * Get list of completed games from achievements
+ */
+function getCompletedGames(achievements) {
 	const completedGames = [];
 
-	achievements.forEach(achievement => {
-		// Extract game ID from achievement
-		for (const [gameId, gameName] of Object.entries(gameMap)) {
-			if (achievement.title.includes(gameName) || achievement.description.includes(gameName)) {
-				if (!completedGames.includes(gameId)) {
-					completedGames.push(gameId);
-				}
+	// Get all verified keys from localStorage
+	const verifiedKeys = JSON.parse(localStorage.getItem('verifiedKeys') || '[]');
+
+	// Decode each key to get the gameId
+	verifiedKeys.forEach(key => {
+		try {
+			const decodedData = JSON.parse(atob(key));
+			if (decodedData.gameId && !completedGames.includes(decodedData.gameId)) {
+				completedGames.push(decodedData.gameId);
 			}
+		} catch (error) {
+			window.debug.log('Failed to parse key', 'error', error);
 		}
 	});
 
@@ -200,9 +258,48 @@ function getCompletedGames(achievements) {
 /**
  * Check if returning from a game with a new key
  */
+// function checkForNewKey() {
+// 	const urlParams = new URLSearchParams(window.location.search);
+// 	const newKey = urlParams.get('key');
+
+// 	if (newKey) {
+// 		window.debug.log('Returned from game with new key', 'info');
+
+// 		// Automatically add the key
+// 		const result = KeyManager.process(newKey);
+
+// 		if (result.success) {
+// 			// Update skills visualization
+// 			updateSkillsVisualization(result.updatedSkills);
+
+// 			// Update achievements
+// 			updateAchievementsDisplay(result.newAchievements, true);
+
+// 			// Show success message
+// 			showNotification('Achievement key added successfully!', 'success');
+
+// 			// Show permanent save instructions
+// 			const instructionsDiv = document.getElementById('permanent-save-instructions');
+// 			if (instructionsDiv) {
+// 				instructionsDiv.innerHTML = KeyManager.generatePermanentSaveInstructions(newKey);
+// 				instructionsDiv.style.display = 'block';
+// 			}
+// 		} else {
+// 			showNotification('Failed to process achievement key: ' + result.message, 'error');
+// 		}
+
+// 		// Clean up URL
+// 		window.history.replaceState({}, document.title, window.location.pathname);
+// 	}
+// }
+
+/**
+ * Check if returning from a game with a new key
+ */
 function checkForNewKey() {
 	const urlParams = new URLSearchParams(window.location.search);
 	const newKey = urlParams.get('key');
+	const source = urlParams.get('source');
 
 	if (newKey) {
 		window.debug.log('Returned from game with new key', 'info');
@@ -225,6 +322,15 @@ function checkForNewKey() {
 			if (instructionsDiv) {
 				instructionsDiv.innerHTML = KeyManager.generatePermanentSaveInstructions(newKey);
 				instructionsDiv.style.display = 'block';
+			}
+
+			// Update completed games list
+			if (source) {
+				const completedGames = JSON.parse(localStorage.getItem('completedGames') || '[]');
+				if (!completedGames.includes(source)) {
+					completedGames.push(source);
+					localStorage.setItem('completedGames', JSON.stringify(completedGames));
+				}
 			}
 		} else {
 			showNotification('Failed to process achievement key: ' + result.message, 'error');
