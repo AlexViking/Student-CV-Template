@@ -1,59 +1,69 @@
 /**
- * Main application functionality - Enhanced for circular flow
+ * Main application functionality with improved structure and debug mode
  */
 
 // Initialize the application when the DOM is loaded
 document.addEventListener('DOMContentLoaded', function () {
-	// Check if this is the first time launching the app
-	if (!localStorage.getItem('appInitialized')) {
-		initializeApp();
+	// Check if debug mode is enabled via URL parameter
+	if (window.location.search.includes('debug=true')) {
+		window.debug.enable();
 	}
+
+	// Initialize the application
+	initializeApp();
 
 	// Load and process achievement keys from keys.js
 	loadAndProcessKeys();
 
-	// Add button to navigate to Game Platform
-	addGamePlatformButton();
+	// Setup navigation handlers
+	setupNavigationHandlers();
 
 	// Update personal info UI with GitHub username
 	updatePersonalInfo();
 
 	// Check if returning from a game with a key
 	checkForNewKey();
+
+	// Initialize debug mode if configured
+	window.debug.init();
 });
 
 /**
  * Initialize the application with default data
  */
 function initializeApp() {
-	// Set flag to prevent re-initialization
-	localStorage.setItem('appInitialized', 'true');
+	window.debug.log('Initializing application', 'info');
 
-	// Get GitHub username from URL
-	const githubUsername = getGitHubUsername();
+	// Check if this is the first time launching the app
+	if (!localStorage.getItem('appInitialized')) {
+		localStorage.setItem('appInitialized', 'true');
 
-	// Set default personal info with GitHub username
-	if (!localStorage.getItem('personalInfo')) {
-		const defaultInfo = {
-			name: githubUsername || 'Student Name',
-			title: 'Web Development Student',
-			about: 'I am a student learning web development through an innovative gamified learning platform.'
-		};
-		localStorage.setItem('personalInfo', JSON.stringify(defaultInfo));
+		// Get GitHub username from URL
+		const githubUsername = getGitHubUsername();
+
+		// Set default personal info with GitHub username
+		if (!localStorage.getItem('personalInfo')) {
+			const defaultInfo = {
+				name: githubUsername || 'Student Name',
+				title: 'Web Development Student',
+				about: 'I am a student learning web development through an innovative gamified learning platform.'
+			};
+			localStorage.setItem('personalInfo', JSON.stringify(defaultInfo));
+			window.debug.log('Default personal info set', 'info');
+		}
+
+		// Initialize empty achievements array
+		if (!localStorage.getItem('achievements')) {
+			localStorage.setItem('achievements', JSON.stringify([]));
+		}
+
+		// Initialize empty verified keys array
+		if (!localStorage.getItem('verifiedKeys')) {
+			localStorage.setItem('verifiedKeys', JSON.stringify([]));
+		}
+
+		window.debug.log('Application initialized with username: ' + githubUsername, 'success');
 	}
-
-	// Initialize empty achievements array
-	if (!localStorage.getItem('achievements')) {
-		localStorage.setItem('achievements', JSON.stringify([]));
-	}
-
-	// Initialize empty verified keys array
-	if (!localStorage.getItem('verifiedKeys')) {
-		localStorage.setItem('verifiedKeys', JSON.stringify([]));
-	}
-
-	// Log initialization
-	console.log('Application initialized with GitHub username:', githubUsername);
 }
 
 /**
@@ -61,17 +71,15 @@ function initializeApp() {
  * @returns {string|null} GitHub username or null if not found
  */
 function getGitHubUsername() {
-	// Get current URL
 	const url = window.location.href;
-
-	// Extract username from GitHub Pages URL pattern
-	// Example: https://username.github.io/Student-CV-Template/
 	const match = url.match(/https?:\/\/([^.]+)\.github\.io/i);
 
 	if (match && match[1]) {
+		window.debug.log('GitHub username extracted: ' + match[1], 'info');
 		return match[1];
 	}
 
+	window.debug.log('Could not extract GitHub username from URL', 'warning');
 	return null;
 }
 
@@ -82,21 +90,11 @@ function updatePersonalInfo() {
 	const personalInfo = JSON.parse(localStorage.getItem('personalInfo') || '{}');
 
 	// Update DOM elements
-	const nameElement = document.getElementById('student-name');
-	const titleElement = document.getElementById('student-title');
-	const aboutElement = document.getElementById('about-text');
+	document.getElementById('student-name').textContent = personalInfo.name || 'Student Name';
+	document.getElementById('student-title').textContent = personalInfo.title || 'Web Development Student';
+	document.getElementById('about-text').textContent = personalInfo.about || 'I am a student learning web development through an innovative gamified learning platform.';
 
-	if (nameElement) {
-		nameElement.textContent = personalInfo.name || 'Student Name';
-	}
-
-	if (titleElement) {
-		titleElement.textContent = personalInfo.title || 'Web Development Student';
-	}
-
-	if (aboutElement) {
-		aboutElement.textContent = personalInfo.about || 'I am a student learning web development through an innovative gamified learning platform.';
-	}
+	window.debug.log('Personal info updated in UI', 'info');
 }
 
 /**
@@ -105,7 +103,7 @@ function updatePersonalInfo() {
 function loadAndProcessKeys() {
 	// Check if achievementKeys is defined (from keys.js)
 	if (typeof achievementKeys !== 'undefined' && Array.isArray(achievementKeys)) {
-		console.log('Found', achievementKeys.length, 'achievement keys to process');
+		window.debug.log(`Found ${achievementKeys.length} achievement keys to process`, 'info');
 
 		// Process each key
 		achievementKeys.forEach(key => {
@@ -113,9 +111,9 @@ function loadAndProcessKeys() {
 				const result = KeyManager.process(key.trim());
 
 				if (result.success) {
-					console.log('Successfully processed key from keys.js');
+					window.debug.log('Successfully processed key from keys.js', 'success');
 				} else {
-					console.log('Failed to process key from keys.js:', result.message);
+					window.debug.log('Failed to process key from keys.js: ' + result.message, 'error');
 				}
 			}
 		});
@@ -127,29 +125,21 @@ function loadAndProcessKeys() {
 		const achievements = KeyManager.getAchievements();
 		updateAchievementsDisplay(achievements);
 	} else {
-		console.log('No achievement keys found in keys.js');
+		window.debug.log('No achievement keys found in keys.js', 'warning');
 	}
 }
 
 /**
- * Add a button to navigate to the Game Platform
+ * Setup navigation handlers
  */
-function addGamePlatformButton() {
-	const mainElement = document.querySelector('main');
-
-	const platformSection = document.createElement('section');
-	platformSection.id = 'platform-link';
-
-	platformSection.innerHTML = `
-        <h2>Learning Games Platform</h2>
-        <p>Ready to improve your skills? Visit our Game Platform to access interactive learning games and earn achievement keys.</p>
-        <button id="go-to-platform" class="pixel-btn">Go to Game Platform</button>
-    `;
-
-	mainElement.appendChild(platformSection);
-
+function setupNavigationHandlers() {
 	// Add click handler for game platform navigation
 	document.getElementById('go-to-platform').addEventListener('click', navigateToGamePlatform);
+
+	// Add debug mode toggle handler
+	document.getElementById('debug-mode-toggle').addEventListener('click', function () {
+		window.debug.toggle();
+	});
 }
 
 /**
@@ -165,10 +155,16 @@ function navigateToGamePlatform() {
 	const completedGames = getCompletedGames(achievements);
 
 	// Build URL with user data
-	const platformUrl = new URL('https://AlexViking.github.io/game-platform');
+	const platformUrl = new URL(CV_CONFIG.PLATFORM_URL);
 	platformUrl.searchParams.append('student', githubUsername || 'unknown');
 	platformUrl.searchParams.append('completed', JSON.stringify(completedGames));
 	platformUrl.searchParams.append('return_url', window.location.href);
+
+	window.debug.log('Navigating to game platform', 'info');
+	window.debug.trackNavigation('Student CV', 'Game Platform', {
+		student: githubUsername,
+		completedGames: completedGames
+	});
 
 	// Navigate in same tab
 	window.location.href = platformUrl.toString();
@@ -209,6 +205,8 @@ function checkForNewKey() {
 	const newKey = urlParams.get('key');
 
 	if (newKey) {
+		window.debug.log('Returned from game with new key', 'info');
+
 		// Automatically add the key
 		const result = KeyManager.process(newKey);
 
@@ -245,16 +243,16 @@ function showNotification(message, type) {
 	notification.className = `notification ${type}`;
 	notification.textContent = message;
 	notification.style.cssText = `
-		position: fixed;
-		top: 20px;
-		right: 20px;
-		padding: 15px 25px;
-		border-radius: 5px;
-		color: white;
-		background-color: ${type === 'success' ? '#10b981' : '#f43f5e'};
-		z-index: 1000;
-		animation: slideIn 0.5s ease-out;
-	`;
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 25px;
+        border-radius: 5px;
+        color: white;
+        background-color: ${type === 'success' ? '#10b981' : '#f43f5e'};
+        z-index: 1000;
+        animation: slideIn 0.5s ease-out;
+    `;
 
 	document.body.appendChild(notification);
 
@@ -269,13 +267,13 @@ function showNotification(message, type) {
 // Add keyframe animations
 const style = document.createElement('style');
 style.textContent = `
-	@keyframes slideIn {
-		from { transform: translateX(100%); opacity: 0; }
-		to { transform: translateX(0); opacity: 1; }
-	}
-	@keyframes slideOut {
-		from { transform: translateX(0); opacity: 1; }
-		to { transform: translateX(100%); opacity: 0; }
-	}
+    @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideOut {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(100%); opacity: 0; }
+    }
 `;
 document.head.appendChild(style);

@@ -4,11 +4,11 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-
 	<title>Student CV - Gamified Learning Platform</title>
+	<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="css/main.css">
 	<link rel="stylesheet" href="css/skills.css">
+	<link rel="stylesheet" href="css/debug.css">
 </head>
 
 <body>
@@ -40,6 +40,13 @@
 			</div>
 		</section>
 
+		<section id="game-platform-link">
+			<h2>Learning Games Platform</h2>
+			<p>Ready to improve your skills? Visit our Game Platform to access interactive learning games and earn
+				achievement keys.</p>
+			<button id="go-to-platform" class="pixel-btn">Go to Game Platform</button>
+		</section>
+
 		<section id="key-entry">
 			<h2>Add Achievement Key</h2>
 			<form id="key-form">
@@ -58,10 +65,13 @@
 	<footer>
 		<div class="container">
 			<p>© 2025 Gamified CV Learning Platform</p>
+			<button id="debug-mode-toggle" class="debug-toggle-btn">Debug</button>
 		</div>
 	</footer>
 
+	<script src="config/cv-config.js"></script>
 	<script src="js/keys.js"></script>
+	<script src="js/debug.js"></script>
 	<script src="js/key-manager.js"></script>
 	<script src="js/skills.js"></script>
 	<script src="js/app.js"></script>
